@@ -95,9 +95,7 @@ function initApp() {
 function setupListeners() {
     console.log("🔧 Configurando listeners...");
 
-    // Navegação (sidebar + bottom nav)
     document.querySelectorAll('.nav-item').forEach(item => {
-        // Remove listeners antigos
         const clone = item.cloneNode(true);
         item.parentNode.replaceChild(clone, item);
     });
@@ -110,7 +108,6 @@ function setupListeners() {
         });
     });
 
-    // Menu mobile
     const menuToggle = document.getElementById('menu-toggle');
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
@@ -118,7 +115,6 @@ function setupListeners() {
         });
     }
 
-    // Seletor de mês
     const monthSelect = document.getElementById('month-select');
     if (monthSelect) {
         monthSelect.addEventListener('change', (e) => {
@@ -128,7 +124,6 @@ function setupListeners() {
         });
     }
 
-    // Formulário de transação
     const formTrans = document.getElementById('form-transacao');
     if (formTrans) {
         formTrans.addEventListener('submit', async (e) => {
@@ -172,7 +167,6 @@ async function loadDataFromCloud() {
     });
     console.log(`✅ ${state.transactions.length} transações carregadas`);
 
-    // Carregar budgets
     try {
         const budgetRef = window.firebaseFns.doc(window.firebaseDB, 'users', state.user.uid, 'config', 'budgets');
         const budgetSnap = await window.firebaseFns.getDoc(budgetRef);
