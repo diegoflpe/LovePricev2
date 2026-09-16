@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <!-- Ícones (FontAwesome via CDN para facilitar) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -26,7 +25,21 @@
             <a href="#" class="nav-item" data-target="faturas"><i class="fas fa-file-invoice-dollar"></i> Faturas</a>
             <a href="#" class="nav-item" data-target="gestao"><i class="fas fa-cogs"></i> Gestão</a>
         </nav>
+        <button id="btn-logout" style="margin-top:auto; background:#ef4444; color:#fff; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold;">
+            <i class="fas fa-sign-out-alt"></i> Sair
+        </button>
     </aside>
+
+    <!-- Tela de Login -->
+    <div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;">
+        <div style="background:#fff; padding:30px; border-radius:12px; width:90%; max-width:400px; text-align:center;">
+            <h2 style="color:#0f172a; margin-bottom:20px;">Love Price 🔒</h2>
+            <input type="email" id="login-email" placeholder="E-mail" style="width:100%; margin-bottom:10px; padding:12px;">
+            <input type="password" id="login-senha" placeholder="Senha" style="width:100%; margin-bottom:10px; padding:12px;">
+            <button id="btn-login" style="width:100%; padding:12px;">Entrar</button>
+            <p id="login-erro" style="color:red; margin-top:10px; font-size:0.9rem;"></p>
+        </div>
+    </div>
 
     <!-- Conteúdo Principal -->
     <main class="main-content">
@@ -86,9 +99,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="dashboard-categorias">
-                        <!-- Preenchido via JS -->
-                    </tbody>
+                    <tbody id="dashboard-categorias"></tbody>
                 </table>
             </div>
         </section>
@@ -120,9 +131,7 @@
                             <th>Total</th>
                         </tr>
                     </thead>
-                    <tbody id="overview-body">
-                        <!-- Gerado dinamicamente -->
-                    </tbody>
+                    <tbody id="overview-body"></tbody>
                 </table>
             </div>
         </section>
@@ -142,6 +151,8 @@
                             <option value="Moradia">Moradia</option>
                             <option value="Saúde">Saúde</option>
                             <option value="Lazer">Lazer</option>
+                            <option value="Receitas">Receitas</option>
+                            <option value="Investimentos">Investimentos</option>
                         </select>
                         <input type="number" id="trans-valor" placeholder="Valor (R$)" step="0.01" required>
                         <select id="trans-tipo">
@@ -173,9 +184,7 @@
         <section id="faturas" class="view">
             <div class="card">
                 <h3>Controle de Faturas de Cartão</h3>
-                <div id="lista-faturas">
-                    <!-- Gerado via JS -->
-                </div>
+                <div id="lista-faturas"></div>
             </div>
         </section>
 
@@ -207,6 +216,70 @@
         <a href="#" class="nav-item" data-target="gestao"><i class="fas fa-cogs"></i></a>
     </nav>
 
-    <script src="app.js"></script>
+    <!-- ============================================== -->
+    <!-- Firebase + App (ÚNICO bloco de script módulo) -->
+    <!-- ============================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            deleteDoc, 
+            doc, 
+            getDoc,
+            setDoc,
+            query, 
+            where, 
+            updateDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // ⚠️ ATENÇÃO: Sua apiKey está exposta aqui. 
+        // Isso é normal para Firebase Web, MAS garanta que as regras do Firestore estão corretas!
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWrIEMY6NLpns8x7RtKAzYQv3ZzOLS3Hs",
+            authDomain: "loveprice.firebaseapp.com",
+            projectId: "loveprice",
+            storageBucket: "loveprice.firebasestorage.app",
+            messagingSenderId: "725801330334",
+            appId: "1:725801330334:web:a95c5a10b1148fa0e23d8f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Disponibiliza globalmente para o app.js
+        window.firebaseAuth = auth;
+        window.firebaseDB = db;
+        window.firebaseFns = { 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            deleteDoc, 
+            doc, 
+            getDoc,
+            setDoc,
+            query, 
+            where, 
+            updateDoc 
+        };
+
+        console.log("✅ Firebase inicializado com sucesso!");
+
+        // Importa o app.js APÓS o Firebase estar pronto
+        import('./app.js').catch(err => console.error("Erro ao carregar app.js:", err));
+    </script>
+
 </body>
 </html>
