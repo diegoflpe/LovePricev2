@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love Price - Finanças</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <!-- Ícones (FontAwesome via CDN para facilitar) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Sidebar (Desktop) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="profile">
+            <img src="https://ui-avatars.com/api/?name=Love+Price&background=0f172a&color=fff" alt="User">
+            <h3>Love Price</h3>
+            <small>Deus no comando!</small>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active" data-target="dashboard"><i class="fas fa-chart-pie"></i> Visão Geral</a>
+            <a href="#" class="nav-item" data-target="detalhada"><i class="fas fa-list-alt"></i> Detalhada</a>
+            <a href="#" class="nav-item" data-target="transacoes"><i class="fas fa-exchange-alt"></i> Transações</a>
+            <a href="#" class="nav-item" data-target="faturas"><i class="fas fa-file-invoice-dollar"></i> Faturas</a>
+            <a href="#" class="nav-item" data-target="gestao"><i class="fas fa-cogs"></i> Gestão</a>
+        </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <header class="top-bar">
+            <button id="menu-toggle" class="mobile-only"><i class="fas fa-bars"></i></button>
+            <h1 id="page-title">Visão Geral</h1>
+            <div class="month-selector">
+                <select id="month-select">
+                    <option value="2026-10">Outubro 2026</option>
+                    <option value="2026-09">Setembro 2026</option>
+                    <option value="2026-11">Novembro 2026</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- TELA 1: DASHBOARD -->
+        <section id="dashboard" class="view active">
+            <div class="cards-grid">
+                <div class="card">
+                    <span>Receita do Mês</span>
+                    <h2 id="dash-receita">R$ 0,00</h2>
+                    <i class="fas fa-arrow-up green"></i>
+                </div>
+                <div class="card">
+                    <span>Despesa do Mês</span>
+                    <h2 id="dash-despesa">R$ 0,00</h2>
+                    <i class="fas fa-arrow-down red"></i>
+                </div>
+                <div class="card">
+                    <span>Saldo Disponível</span>
+                    <h2 id="dash-saldo">R$ 0,00</h2>
+                    <i class="fas fa-wallet blue"></i>
+                </div>
+                <div class="card">
+                    <span>% Comprometido</span>
+                    <h2 id="dash-comprometido">0%</h2>
+                    <i class="fas fa-percentage orange"></i>
+                </div>
+            </div>
+
+            <div class="chart-container card">
+                <h3>Evolução Mensal</h3>
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-line"></i> Gráfico de Linhas (Receita x Despesa)
+                </div>
+            </div>
+
+            <div class="category-table card">
+                <h3>Controle por Categoria</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Orçado</th>
+                            <th>Gasto</th>
+                            <th>Disponível</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-categorias">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TELA 2: DETALHADA (Overview) -->
+        <section id="detalhada" class="view">
+            <div class="overview-controls">
+                <button class="btn-expandir" onclick="toggleAll(true)">Expandir Tudo</button>
+                <button class="btn-recolher" onclick="toggleAll(false)">Recolher Tudo</button>
+            </div>
+            
+            <div class="overview-table-container card">
+                <table class="overview-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Jan</th>
+                            <th>Fev</th>
+                            <th>Mar</th>
+                            <th>Abr</th>
+                            <th>Mai</th>
+                            <th>Jun</th>
+                            <th>Jul</th>
+                            <th>Ago</th>
+                            <th>Set</th>
+                            <th>Out</th>
+                            <th>Nov</th>
+                            <th>Dez</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overview-body">
+                        <!-- Gerado dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TELA 3: TRANSAÇÕES -->
+        <section id="transacoes" class="view">
+            <div class="card">
+                <h3>Adicionar Nova Transação</h3>
+                <form id="form-transacao">
+                    <div class="form-group">
+                        <input type="date" id="trans-data" required>
+                        <input type="text" id="trans-desc" placeholder="Descrição" required>
+                        <select id="trans-categoria" required>
+                            <option value="">Categoria...</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Lazer">Lazer</option>
+                        </select>
+                        <input type="number" id="trans-valor" placeholder="Valor (R$)" step="0.01" required>
+                        <select id="trans-tipo">
+                            <option value="despesa">Despesa</option>
+                            <option value="receita">Receita</option>
+                            <option value="investimento">Investimento</option>
+                        </select>
+                        <button type="submit"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card">
+                <h3>Últimos Lançamentos</h3>
+                <table id="tabela-transacoes">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TELA 4: FATURAS -->
+        <section id="faturas" class="view">
+            <div class="card">
+                <h3>Controle de Faturas de Cartão</h3>
+                <div id="lista-faturas">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 5: GESTÃO -->
+        <section id="gestao" class="view">
+            <div class="card">
+                <h3>Cadastro de Salários e Vencimentos</h3>
+                <form id="form-gestao">
+                    <input type="text" placeholder="Nome (Ex: Salário Diego)" id="gestao-nome">
+                    <input type="number" placeholder="Valor (R$)" id="gestao-valor">
+                    <input type="number" placeholder="Dia Vencimento" id="gestao-dia">
+                    <button type="submit">Salvar</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3>Metas por Categoria</h3>
+                <div id="metas-categorias"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Navegação Inferior (Mobile) -->
+    <nav class="bottom-nav mobile-only">
+        <a href="#" class="nav-item active" data-target="dashboard"><i class="fas fa-chart-pie"></i></a>
+        <a href="#" class="nav-item" data-target="detalhada"><i class="fas fa-list-alt"></i></a>
+        <a href="#" class="nav-item" data-target="transacoes"><i class="fas fa-exchange-alt"></i></a>
+        <a href="#" class="nav-item" data-target="faturas"><i class="fas fa-file-invoice-dollar"></i></a>
+        <a href="#" class="nav-item" data-target="gestao"><i class="fas fa-cogs"></i></a>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
